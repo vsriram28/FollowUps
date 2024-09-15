@@ -1,5 +1,5 @@
 # FollowUps
-A simple app to take notes and add follw up tasks.
+A simple app to take notes with a focus on Following up action items.
 
 # Why another Notes app?
 There are plenty of Notes taking apps in the market from a simplest ones to the most sophisticated.
