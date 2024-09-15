@@ -1,0 +1,178 @@
+body {
+  font-family: sans-serif; /* Choose your desired font */
+  background-color: #222; /* Dark background */
+  color: #ccc; /* Light text color */
+}
+
+.container {
+  display: flex;
+  height: 100vh; /* Take up full viewport height */
+}
+
+.left-panel {
+  width: 250px; /* Adjust width as needed */
+  background-color: #333;
+  padding: 10px;
+  overflow-y: auto; /* Add scrollbar if content overflows */
+}
+
+.right-panel {
+  flex-grow: 1;
+  padding: 10px;
+  position: relative; /* To position the toolbar absolutely */
+}
+
+.textarea-toolbar {
+    position: absolute;
+    top: 10px; /* Adjust as needed */
+    right: 10px;
+    display: flex;
+}
+
+.toolbar-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1.2em; /* Adjust as needed */
+}
+.bottom-panel {
+  background-color: #333;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.file {
+  color: white; /* Set default link color to white */
+}
+
+.file.active {
+  background-color: blue; /* Blue background for active link */
+  color: white;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+
+.file-item, .folder {
+  padding: 5px 10px;
+  cursor: pointer; /* Optional: indicate clickable */
+}
+
+.file-item:hover, .folder:hover {
+  background-color: #444; /* Optional: highlight on hover */
+}
+/*
+.file-list a {
+    text-decoration: none;
+}
+*/
+
+.icon {
+  margin-right: 5px;
+}
+
+.count {
+  background-color: #555;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  font-size: 0.8em;
+}
+
+textarea {
+  width: 100%;
+  height: calc(100% - 20px); /* Adjust height as needed */
+  resize: none;
+  background-color: #333;
+  color: #ccc;
+  border: none;
+  padding: 10px;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer; /* Optional: indicate clickable */
+}
+
+.tab:hover {
+  background-color: #444; /* Optional: highlight on hover */
+}
+
+.tab-pane {
+    display: none; /* Hide all tab panes by default */
+}
+
+.tab-pane.active {
+    display: block; /* Show the active tab pane */
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content.dialog-box {
+    width: 400px; /* Set a fixed width for the dialog box */
+    max-width: 80%; /* Ensure it doesn't exceed 80% of the viewport width */
+    resize: none; /* Disable resizing */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the dialog box */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#followUpTextarea {
+    width: calc(100% - 20px); /* Account for padding */
+    margin-bottom: 10px;
+}
+
+.meeting-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px; /* Add rounded corners */
+}
+
+.notes-list {
+    list-style: none;
+    padding: 0;
+}
+
+.notes-list li {
+    cursor: pointer;
+}

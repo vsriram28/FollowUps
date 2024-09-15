@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to My Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="left-panel">
+    <div class="file-list">
+      <div class="folder">
+        <span class="icon">&#x1F4C1;</span> Days/Topics<p></p>
+      </div>
+      {% for date in unique_dates %}
+      <a href="#" class="file" data-date="{{ date[0].strftime('%m%d%Y') }}">
+        <span class="icon">&#x1F5CE;</span> {{ date[0].strftime('%m%d%Y') }}<br>
+        {# You might want to add logic here to count associated meetings or notes for each date #}
+      </a>
+      {% endfor %}
+       <!-- div class="file"> -  08212024 </div -->
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <!--
+    <div class="top-panel">
+      <div class="textarea-toolbar">
+        <button id="addButton" class="toolbar-button">+</button>
+      </div>
+      <textarea name="notesContent" id="notesContent" placeholder="Enter text here..."
+          rows="20" cols="132"></textarea>
+    </div>
+      -->
+    <div class="top-panel" id="meetingDetails">
+
+    </div>
+    <div class="bottom-panel">
+      <div class="tabs">
+        <div class="tab active" data-tab="followup">Follow-up</div>
+        <div class="tab" data-tab="done">Done</div>
+      </div>
+      <div id="tab-content">
+        <div id="followup" class="tab-pane active">
+          <ul id="followupList">
+            </ul>
+        </div>
+        <div id="done" class="tab-pane">
+          <ul id="doneList">
+            </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="addFollowUpModal" class="modal">
+    <div class="modal-content dialog-box">
+      <span class="close">&times;</span>
+      <textarea id="followUpTextarea" rows="2" cols="40" placeholder="Follow-up action..."></textarea>
+      <button id="addFollowUpButton">Add Follow-up</button>
+    </div>
+  </div>
+
+</div>
+<script>
+$(document).ready(function(){
+    $('.file').click(function(e){
+        e.preventDefault();
+        $('.file').removeClass('active');
+        $(this).addClass('active');
+
+        var date = $(this).data('date');
+        /*
+        $.getJSON('/meetings_by_date_with_notes/' + date, function(data){
+            var meetingList = "\n";
+            $.each(data, function(index, meetingData){
+                var meeting = meetingData.meeting;
+                meetingList += "Meeting: " + meeting.title + " (Start: " + meeting.start_time + ", End: " + meeting.end_time + ")\n";
+
+                // Add notes for the meeting
+                if (meetingData.notes.length > 0) {
+                    meetingList += "Notes:\n";
+                    $.each(meetingData.notes, function(noteIndex, note){
+                        meetingList += " - " + note.content + "\n";
+                    });
+                }
+
+                // Add a separator line after each meeting and its notes
+                // meetingList += "\n ------------------------------------------------------------------- \n\n";
+                meetingList += "\n";
+            });
+            $('#notesContent').val(meetingList);
+        });
+        */
+
+        $.getJSON('/meetings_by_date_with_notes/' + date, function(data){
+            var meetingListHTML = "";
+            $.each(data, function(index, meetingData){
+                var meeting = meetingData.meeting;
+                meetingListHTML += "<div class='meeting-box'>"; // Start of meeting box
+                meetingListHTML += "<h4>Meeting: " + meeting.title + "</h4>";
+                meetingListHTML += "<p>(Start: " + meeting.start_time + ", End: " + meeting.end_time + ")</p>";
+
+                // Add notes for the meeting
+                if (meetingData.notes.length > 0) {
+                    meetingListHTML += "<ul class='notes-list'>";
+                    $.each(meetingData.notes, function(noteIndex, note){
+                        meetingListHTML += "<li data-note-id='" + note.id + "' data-meeting-id='" + meeting.id + "' data-user-id='" + note.user_id + "' data-tenant-id='" + note.tenant_id + "'>" + note.content + "</li>";
+                    });
+                    meetingListHTML += "</ul>";
+                }
+
+                meetingListHTML += "</div>\n<hr>\n"; // End of meeting box and separator
+            });
+            $('#meetingDetails').html(meetingListHTML); // Directly set HTML content
+
+            // Add event listener to notes to display IDs on hover/click
+            $('.notes-list li').hover(function() {
+                var noteId = $(this).data('note-id'); //No separate note-id in the model
+                var meetingId = $(this).data('meeting-id');
+                var userId = $(this).data('user-id');
+                var tenantId = $(this).data('tenant-id');
+                var idInfo = "Note ID: " + noteId + ", Meeting ID: " + meetingId + ", User ID: " + userId + ", Tenant ID: " + tenantId;
+                $(this).attr('title', idInfo); // Set tooltip
+            });
+        });
+
+        // Add event listener to notes to make them editable
+        $('#meetingDetails').on('click', '.notes-list li', function() {
+            var originalContent = $(this).text();
+            var noteId = $(this).data('note-id');
+
+            // Create an input field for editing
+            var modifiedNoteField = $('<textarea rows="2" cols="60">').val(originalContent);
+
+            // Create a save button
+            var saveButton = $('<button>').text('Save').click(function() {
+            var newContent = modifiedNoteField.val();
+
+            // Update the note in the database (you'll need to implement this part)
+            $.ajax({
+                    url: '/notes/' + noteId,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'content': newContent }),
+                    success: function(response) {
+                        // Update the displayed note content
+                        $(this).parent().text(newContent);
+                        $(this).remove(); // Remove the save button
+                    }.bind(this), // Bind 'this' to the saveButton for correct context in the success callback
+                    error: function(error) {
+                        alert('Error updating note: ' + error.responseText);
+                        // Handle the error appropriately
+                    }
+                });
+            });
+
+            // Replace the note content with the textarea and button, but keep the original content within the textarea
+            $(this).html('').append(textareaField).append(saveButton);
+
+            // Focus on the textarea and place the cursor at the end
+            textareaField.focus();
+            textareaField[0].setSelectionRange(originalContent.length, originalContent.length);
+        });
+
+    });
+
+    $('.tab').click(function(){
+        $('.tab').removeClass('active');
+        $(this).addClass('active');
+        $('.tab-pane').removeClass('active');
+        $('#' + $(this).data('tab')).addClass('active');
+
+        // Fetch and display follow-up actions or done actions based on the active tab
+        var activeTab = $(this).data('tab');
+        $.getJSON('/followup_actions_for_given_status/' + activeTab, function(data){
+            var actionList = "";
+            $.each(data, function(index, action){
+                var checked = action.status === 'completed' ? 'checked' : '';
+                actionList += "<li><input type='checkbox' " + checked + "> " + action.full_action + "</li>";
+            });
+            $('#' + activeTab + 'List').html(actionList);
+        });
+    });
+
+    // Initial load - fetch follow-up actions for the "Follow-up" tab
+    $.getJSON('/followup_actions_for_given_status/followup', function(data){
+        var actionList = "";
+        $.each(data, function(index, action){
+            var checked = action.status === 'completed' ? 'checked' : '';
+            actionList += "<li><input type='checkbox' " + checked + "> " + action.full_action + "</li>";
+        });
+        $('#followupList').html(actionList);
+    });
+
+      // Modal handling
+    var modal = document.getElementById("addFollowUpModal");
+    var btn = document.getElementById("addButton");
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";  
+
+        }
+    }
+
+    // Add Follow-up button logic (you'll need to implement the actual follow-up creation)
+    document.getElementById('addFollowUpButton').addEventListener('click', function() {
+        const followUpText = document.getElementById("followUpTextarea").value;
+        // ... Your logic to create a follow-up action using followUpText
+        alert("Follow-up added: " + followUpText); // Placeholder, replace with actual logic
+        modal.style.display = "none";
+    });
+});
+</script>
+
+</body>
+</html>

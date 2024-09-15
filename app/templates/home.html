@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Note Taking App</title>
+    </head>
+<body>`
+
+    <h1>Welcome to the Note Taking App</h1>
+    <!--
+    {% if current_user.is_authenticated %}  {# Assuming you have user authentication #}
+        <p>Hello, {{ current_user.username }}!</p>
+
+        <h2>Your Meetings</h2>
+        <ul>
+            {% for meeting in meetings %} {# Assuming 'meetings' is passed from the route #}
+                <li>
+                    <a href="{{ url_for('get_notes', meeting_id=meeting.id) }}">{{ meeting.title }}</a>
+                    (Start: {{ meeting.start_time }}, End: {{ meeting.end_time }})
+                </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('create_meeting') }}">Create New Meeting</a> {# Link to create meeting #}
+    {% else %}
+        <p>Please log in to access your notes.</p>
+        <a href="{{ url_for('login') }}">Login</a> {# Assuming you have a 'login' route #}
+    {% endif %}
+    -->
+</body>
+</html>
