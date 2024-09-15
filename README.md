@@ -7,7 +7,7 @@ Many of them provide the ability to have follow up tasks created as a separate l
 But when the user checks the follow-up tasks, there is no context to any of the tasks iin the tool.
 The user has to jiggle their memory on why a particular task was added and what they are supposed to do.
 If the user is someone who attends multiple meetings in a day and creates follow-up tasks, then having the ability to know the context for each of the tasks will be very helpful. 
-This app provides the context to each of the task.
+This app provides the context to each of the follow-up task.
 
 # How to get the context for a follow-up task
 When the user creates a follow-up task, it gets added to the list of already created tasks.
